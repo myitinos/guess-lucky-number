@@ -79,7 +79,10 @@ def view_card_hint(
 
 
 class CardGuess(pydantic.BaseModel):
-    number: str = pydantic.Field(min_length=16, max_length=16)
+    number: str = pydantic.Field(
+        min_length=app.model.card.NUMBER_LEN,
+        max_length=app.model.card.NUMBER_LEN,
+    )
 
 
 @router.post("/{id}/guess")

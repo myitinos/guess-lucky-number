@@ -4,9 +4,12 @@ import string
 
 import sqlmodel
 
+NUMBER_LEN = 6
+HINT_LEN = 4
+
 
 def random_number_generator():
-    return "".join([secrets.choice(string.digits) for _ in range(16)])
+    return "".join([secrets.choice(string.digits) for _ in range(NUMBER_LEN)])
 
 
 class CardCreate(sqlmodel.SQLModel):
@@ -15,7 +18,7 @@ class CardCreate(sqlmodel.SQLModel):
 
 class CardPublic(CardCreate):
     id: int | None = sqlmodel.Field(default=None, primary_key=True)
-    remaining_hint: int = sqlmodel.Field(default=8)
+    remaining_hint: int = sqlmodel.Field(default=HINT_LEN)
 
 
 class CardHint(CardPublic):
@@ -25,8 +28,8 @@ class CardHint(CardPublic):
 
 class Card(CardPublic, table=True):
     number: str = sqlmodel.Field(
-        max_length=16,
-        min_length=16,
+        max_length=NUMBER_LEN,
+        min_length=NUMBER_LEN,
         default_factory=random_number_generator,
     )
     created_at: datetime.datetime = sqlmodel.Field(
