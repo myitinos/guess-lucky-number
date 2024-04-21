@@ -8,11 +8,31 @@ Clone this project.
 
 ```bash
 git clone https://github.com/myitinos/guess-lucky-number.git
+cd guess-lucky-number
 ```
 
-use docker compose to run it easily:
+### With makefile
+
 ```bash
-docker compose up --build
+make run
+```
+
+### Manual
+
+create file `database.db`
+```bash
+touch database.db
+```
+
+use docker compose to run it:
+```bash
+docker compose up --build -d
+```
+
+## How to stop?
+
+```bash
+docker compose down
 ```
 
 if there's no error it should be running in your local machine, access it with a browser at url: `http://127.0.0.1` or [here](http://127.0.0.1:80)
