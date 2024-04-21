@@ -20,7 +20,7 @@ def clear_old_card():
         old_card = session.exec(
             sqlmodel.select(app.model.card.Card)
             .order_by(sqlmodel.col(app.model.card.Card.created_at).desc())
-            .offset(100)
+            .offset(app.model.card.MAX_DRAWN)
         ).all()
         for card in old_card:
             session.delete(card)

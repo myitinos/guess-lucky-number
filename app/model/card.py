@@ -1,11 +1,13 @@
 import datetime
+import os
 import secrets
 import string
 
 import sqlmodel
 
-NUMBER_LEN = 6
-HINT_LEN = 4
+NUMBER_LEN = int(os.getenv("CARD_NUMBER_LEN", 16))
+HINT_MAX = int(os.getenv("CARD_HINT_MAX", 8))
+MAX_DRAWN = int(os.getenv("CARD_MAX_DRAWN", 100))
 
 
 def random_number_generator():
@@ -18,7 +20,7 @@ class CardCreate(sqlmodel.SQLModel):
 
 class CardPublic(CardCreate):
     id: int | None = sqlmodel.Field(default=None, primary_key=True)
-    remaining_hint: int = sqlmodel.Field(default=HINT_LEN)
+    remaining_hint: int = sqlmodel.Field(default=HINT_MAX)
 
 
 class CardHint(CardPublic):
