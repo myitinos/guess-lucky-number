@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guess-lucky-number
+    restart: always
+    ports:
+      - 0.0.0.0:80:80
+    environment:
+      - FLAG=${FLAG:-CORRECT}
+    volumes:
+      - type: bind
+        source: ./database.db
+        target: /app/database.db
+
