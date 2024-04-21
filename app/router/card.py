@@ -17,6 +17,9 @@ router = fastapi.APIRouter(
 
 @router.post("")
 def create_card(card: app.model.card.CardCreate) -> app.model.card.CardPublic:
+    """Draw a new card with your name, and guess the number in `/card/{id}/guess` !
+
+    You might need to use some hint in `/card/{id}/hint`, use it carefully~"""
     db_card = app.model.card.Card.model_validate(card)
     with sqlmodel.Session(app.db.ENGINE) as session:
         session.add(db_card)
@@ -26,7 +29,8 @@ def create_card(card: app.model.card.CardCreate) -> app.model.card.CardPublic:
 
 
 @router.get("")
-def view_card() -> typing.Sequence[app.model.card.CardPublic]:
+def view_cards() -> typing.Sequence[app.model.card.CardPublic]:
+    """View all currently open card"""
     with sqlmodel.Session(app.db.ENGINE) as session:
         result = session.exec(sqlmodel.select(app.model.card.Card)).all()
     return result
@@ -50,6 +54,7 @@ def view_card_single(
         fastapi.Depends(get_single_card),
     ],
 ) -> app.model.card.CardPublic:
+    """View a single card, and check if it has remaining hint for you to discover"""
     return card
 
 
@@ -61,6 +66,11 @@ def view_card_hint(
     ],
     pos: int = fastapi.Query(ge=0, le=16),
 ) -> app.model.card.CardHint:
+    """Get a hint for a card that you already drawn,
+    you only have limited number of hint!
+
+    Each hint use can only reveal one number in a given position.
+    """
     card.remaining_hint = card.remaining_hint - 1
     if card.remaining_hint < 0:
         raise fastapi.HTTPException(
@@ -93,6 +103,7 @@ def guess_card_number(
     ],
     guess: CardGuess,
 ):
+    """Guess the number in your card and win the flag if you are correct!"""
     correct = card.number == guess.number
     with sqlmodel.Session(app.db.ENGINE) as session:
         session.delete(card)
