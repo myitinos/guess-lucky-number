@@ -33,5 +33,6 @@ class Card(CardPublic, table=True):
         default_factory=random_number_generator,
     )
     created_at: datetime.datetime = sqlmodel.Field(
-        default_factory=datetime.datetime.now
+        default_factory=datetime.datetime.now,
+        index=True,
     )

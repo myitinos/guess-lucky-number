@@ -15,8 +15,23 @@ router = fastapi.APIRouter(
 )
 
 
+def clear_old_card():
+    with sqlmodel.Session(app.db.ENGINE) as session:
+        old_card = session.exec(
+            sqlmodel.select(app.model.card.Card)
+            .order_by(sqlmodel.col(app.model.card.Card.created_at).desc())
+            .offset(100)
+        ).all()
+        for card in old_card:
+            session.delete(card)
+            session.commit()
+
+
 @router.post("")
-def create_card(card: app.model.card.CardCreate) -> app.model.card.CardPublic:
+def create_card(
+    card: app.model.card.CardCreate,
+    background_tasks: fastapi.BackgroundTasks,
+) -> app.model.card.CardPublic:
     """Draw a new card with your name, and guess the number in `/card/{id}/guess` !
 
     You might need to use some hint in `/card/{id}/hint`, use it carefully~"""
@@ -25,7 +40,10 @@ def create_card(card: app.model.card.CardCreate) -> app.model.card.CardPublic:
         session.add(db_card)
         session.commit()
         session.refresh(db_card)
-        return db_card
+
+    background_tasks.add_task(clear_old_card)
+
+    return db_card
 
 
 @router.get("")
