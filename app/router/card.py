@@ -62,7 +62,7 @@ def view_card_hint(
     pos: int = fastapi.Query(ge=0, le=16),
 ) -> app.model.card.CardHint:
     card.remaining_hint = card.remaining_hint - 1
-    if card.remaining_hint <= 0:
+    if card.remaining_hint < 0:
         raise fastapi.HTTPException(
             status_code=403,
             detail="You don't have remaining hint",
