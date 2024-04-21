@@ -23,8 +23,3 @@ app = fastapi.FastAPI(
     lifespan=lifespan,
 )
 app.include_router(router=router.router)
-
-
-@app.get("/")
-async def root():
-    return {"message": "Hello Friend!"}
