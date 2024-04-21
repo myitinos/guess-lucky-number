@@ -64,7 +64,7 @@ def view_card_hint(
         app.model.card.Card,
         fastapi.Depends(get_single_card),
     ],
-    pos: int = fastapi.Query(ge=0, le=16),
+    pos: int = fastapi.Query(ge=0, lt=app.model.card.NUMBER_LEN),
 ) -> app.model.card.CardHint:
     """Get a hint for a card that you already drawn,
     you only have limited number of hint!
